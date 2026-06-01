@@ -4,6 +4,7 @@ import { useMatchStore } from '../../store/matchStore.js';
 import { useGameStore } from '../../store/gameStore.js';
 import { useHistoryStore } from '../../store/historyStore.js';
 import { StatsPanel } from './StatsPanel.js';
+import { exportMatchToFile } from '../../export/exportMatch.js';
 
 interface Props {
   match: MatchState;
@@ -64,9 +65,18 @@ export function MatchResults({ match, heroId }: Props) {
         </div>
       )}
 
-      <button className="btn-call" style={{ width: '100%', padding: 12 }} onClick={newMatch}>
-        New Match
-      </button>
+      <div style={{ display: 'flex', gap: 8 }}>
+        <button
+          className="btn-ghost"
+          style={{ flex: 1, padding: 12 }}
+          onClick={() => { void exportMatchToFile(match, allHands, heroId); }}
+        >
+          ⬇ Export JSON
+        </button>
+        <button className="btn-call" style={{ flex: 1, padding: 12 }} onClick={newMatch}>
+          New Match
+        </button>
+      </div>
     </div>
   );
 }
