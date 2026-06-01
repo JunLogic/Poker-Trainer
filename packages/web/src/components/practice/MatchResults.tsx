@@ -1,6 +1,9 @@
 import type { MatchState, PlayerId } from '@poker/engine';
+import { computeAllStats, handsForMatch } from '@poker/engine';
 import { useMatchStore } from '../../store/matchStore.js';
 import { useGameStore } from '../../store/gameStore.js';
+import { useHistoryStore } from '../../store/historyStore.js';
+import { StatsPanel } from './StatsPanel.js';
 
 interface Props {
   match: MatchState;
@@ -8,6 +11,10 @@ interface Props {
 }
 
 export function MatchResults({ match, heroId }: Props) {
+  const allHands = useHistoryStore(s => s.hands);
+  const matchHands = handsForMatch(allHands, match.config.matchId);
+  const stats = computeAllStats(matchHands);
+
   const nameOf = (id: PlayerId) => match.config.players.find(p => p.id === id)?.name ?? id;
   const heroWon = match.winnerId === heroId;
 
@@ -50,6 +57,12 @@ export function MatchResults({ match, heroId }: Props) {
           </div>
         ))}
       </div>
+
+      {stats.length > 0 && (
+        <div style={{ marginBottom: 16 }}>
+          <StatsPanel stats={stats} heroId={heroId} title={`Match stats · ${matchHands.length} hands`} />
+        </div>
+      )}
 
       <button className="btn-call" style={{ width: '100%', padding: 12 }} onClick={newMatch}>
         New Match

@@ -41,3 +41,6 @@ export {
 export type {
   MatchPlayerConfig, MatchConfig, MatchEvent, MatchState, BlindAssignment, NextHand,
 } from './match.js';
+
+export { computePlayerStats, computeAllStats, handsForMatch } from './stats.js';
+export type { PlayerStats } from './stats.js';
