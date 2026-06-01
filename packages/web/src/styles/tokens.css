@@ -1,0 +1,36 @@
+:root {
+  --color-felt: #1a472a;
+  --color-felt-dark: #0f2d1a;
+  --color-felt-light: #2d6a42;
+  --color-card-bg: #f8f4e8;
+  --color-card-border: #c9b88a;
+  --color-text: #e8f0e8;
+  --color-text-dim: #8aab8a;
+  --color-text-dark: #1a2a1a;
+  --color-gold: #d4a843;
+  --color-fold: #c0392b;
+  --color-call: #27ae60;
+  --color-raise: #2980b9;
+  --color-allin: #8e44ad;
+
+  --suit-hearts: #c0392b;
+  --suit-diamonds: #c0392b;
+  --suit-spades: #1a1a1a;
+  --suit-clubs: #1a1a1a;
+
+  --radius-card: 6px;
+  --radius-panel: 12px;
+  --radius-btn: 8px;
+
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-panel: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+  --font-mono: 'SF Mono', 'Fira Code', monospace;
+  --font-sans: system-ui, -apple-system, sans-serif;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 40px;
+}
