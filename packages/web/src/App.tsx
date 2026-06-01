@@ -1,69 +1,32 @@
 import { useState } from 'react';
 import { useGameStore } from './store/gameStore.js';
-import { useHistoryStore } from './store/historyStore.js';
-import { useThoughtsStore } from './store/thoughtsStore.js';
+import { useMatchStore } from './store/matchStore.js';
 import { useGameState } from './hooks/useGameState.js';
 import { UmpireSetup } from './components/umpire/UmpireSetup.js';
 import { UmpireTable } from './components/umpire/UmpireTable.js';
-import { PracticeSetup } from './components/practice/PracticeSetup.js';
-import { PracticeTable } from './components/practice/PracticeTable.js';
+import { PracticeMatch } from './components/practice/PracticeMatch.js';
 import { HandHistoryList } from './components/history/HandHistoryList.js';
 import { HandReplayViewer } from './components/history/HandReplayViewer.js';
-import { HandSummaryView } from './components/history/HandSummaryView.js';
 import type { HandRecord } from '@poker/engine';
-import type { HandAnnotations } from './types/thoughts.js';
 
 type AppMode = 'home' | 'umpire' | 'practice' | 'history';
 
 export function App() {
   const [mode, setMode] = useState<AppMode>('home');
-  const [botIds, setBotIds] = useState<string[]>([]);
-  const [botDifficulty, setBotDifficulty] = useState<'easy' | 'medium' | 'hard'>('medium');
   const [replayRecord, setReplayRecord] = useState<HandRecord | null>(null);
-  const [summaryData, setSummaryData] = useState<{ record: HandRecord; annotations: HandAnnotations } | null>(null);
 
   const config = useGameStore(s => s.config);
-  const actionLog = useGameStore(s => s.actionLog);
   const resetHand = useGameStore(s => s.resetHand);
-  const saveRecord = useHistoryStore(s => s.saveRecord);
-  const thoughtsSnapshot = useThoughtsStore(s => s.snapshot);
+  const resetMatch = useMatchStore(s => s.reset);
+  const match = useMatchStore(s => s.match);
 
   const state = useGameState();
 
   function goHome() {
     resetHand();
+    resetMatch();
     setMode('home');
-    setBotIds([]);
     setReplayRecord(null);
-    setSummaryData(null);
-  }
-
-  function handleHandComplete(annotations: HandAnnotations) {
-    if (!config || !state) return;
-
-    const record: HandRecord = {
-      handId: config.handId,
-      startedAt: actionLog[0]?.timestamp ?? Date.now(),
-      finishedAt: Date.now(),
-      config,
-      actionLog,
-      summary: {
-        playerNames: config.players.map(p => p.name),
-        winnerIds: state.sidePots.length > 0
-          ? state.sidePots.flatMap(pot => pot.eligiblePlayerIds.slice(0, 1))
-          : [],
-        potTotal: state.sidePots.reduce((s, p) => s + p.amount, 0),
-        streetReached: state.street,
-      },
-    };
-
-    saveRecord(record, annotations);
-    setSummaryData({ record, annotations });
-  }
-
-  function handleBotIds(ids: string[], diff: 'easy' | 'medium' | 'hard') {
-    setBotIds(ids);
-    setBotDifficulty(diff);
   }
 
   if (replayRecord) {
@@ -92,9 +55,9 @@ export function App() {
             {m.charAt(0).toUpperCase() + m.slice(1)}
           </button>
         ))}
-        {config && (
+        {(config || match) && (
           <button className="btn-ghost" style={{ marginLeft: 'auto', fontSize: '0.8rem' }} onClick={goHome}>
-            ✕ New Hand
+            ✕ Quit
           </button>
         )}
       </nav>
@@ -126,32 +89,12 @@ export function App() {
             : <UmpireSetup />
         )}
 
-        {mode === 'practice' && (
-          config && state
-            ? <PracticeTable
-                state={state}
-                botIds={botIds}
-                difficulty={botDifficulty}
-                heroId="hero"
-                onHandComplete={handleHandComplete}
-              />
-            : <PracticeSetup onBotIds={handleBotIds} />
-        )}
+        {mode === 'practice' && <PracticeMatch />}
 
         {mode === 'history' && (
           <HandHistoryList onSelect={record => setReplayRecord(record)} />
         )}
       </main>
-
-      {/* Hand summary overlay — shown after practice hand ends */}
-      {summaryData && (
-        <HandSummaryView
-          record={summaryData.record}
-          annotations={summaryData.annotations}
-          heroId="hero"
-          onClose={goHome}
-        />
-      )}
     </div>
   );
 }

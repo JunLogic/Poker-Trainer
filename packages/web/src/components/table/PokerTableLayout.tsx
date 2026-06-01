@@ -9,6 +9,8 @@ interface Props {
   heroId: string;
   equities: readonly number[];
   isComputingEquity: boolean;
+  /** When false, the hero equity strip is hidden (computation still runs). */
+  showOdds?: boolean;
 }
 
 // ── Seat positions for desktop oval layout ────────────────────────────────────
@@ -31,7 +33,7 @@ function boardStreetLabel(state: GameState): string {
   return 'Preflop';
 }
 
-export function PokerTableLayout({ state, heroId, equities, isComputingEquity }: Props) {
+export function PokerTableLayout({ state, heroId, equities, isComputingEquity, showOdds = true }: Props) {
   const currentId = whoseTurn(state);
   const heroPlayer = state.players.find(p => p.id === heroId);
   const botPlayers = state.players.filter(p => p.id !== heroId);
@@ -81,7 +83,7 @@ export function PokerTableLayout({ state, heroId, equities, isComputingEquity }:
         </div>
 
         {/* Equity strip */}
-        <EquityStrip heroEquity={heroEquity} isComputing={isComputingEquity} />
+        {showOdds && <EquityStrip heroEquity={heroEquity} isComputing={isComputingEquity} />}
 
         {/* Hero cards */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: 8, padding: '10px 16px' }}>
@@ -162,7 +164,7 @@ export function PokerTableLayout({ state, heroId, equities, isComputingEquity }:
         </div>
 
         {/* Equity strip below the table */}
-        <EquityStrip heroEquity={heroEquity} isComputing={isComputingEquity} />
+        {showOdds && <EquityStrip heroEquity={heroEquity} isComputing={isComputingEquity} />}
       </div>
     </>
   );

@@ -13,9 +13,12 @@ interface SettingsStore {
   bigBlind: number;
   ante: number;
   dealerSeatIndex: number;
+  /** Practice mode: show the hero equity display (computation always runs). */
+  showOdds: boolean;
   setPlayers: (players: PlayerSetupForm[]) => void;
   setBlinds: (sb: number, bb: number, ante?: number) => void;
   setDealer: (seatIndex: number) => void;
+  setShowOdds: (show: boolean) => void;
 }
 
 export const useSettingsStore = create<SettingsStore>()(
@@ -30,9 +33,11 @@ export const useSettingsStore = create<SettingsStore>()(
       bigBlind: 10,
       ante: 0,
       dealerSeatIndex: 0,
+      showOdds: true,
       setPlayers: (players) => set({ players }),
       setBlinds: (smallBlind, bigBlind, ante = 0) => set({ smallBlind, bigBlind, ante }),
       setDealer: (dealerSeatIndex) => set({ dealerSeatIndex }),
+      setShowOdds: (showOdds) => set({ showOdds }),
     }),
     { name: 'poker-settings' },
   ),
