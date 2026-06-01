@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { nanoid } from 'nanoid';
-import { HeuristicBot, whoseTurn, legalActions } from '@poker/engine';
+import { makeBot, whoseTurn, legalActions } from '@poker/engine';
 import type { GameState } from '@poker/engine';
 import { useGameStore } from '../store/gameStore.js';
 
@@ -18,7 +18,7 @@ export function useBot(
 ): void {
   const appendAction = useGameStore(s => s.appendAction);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const bot = useRef(new HeuristicBot('Heuristic Bot', 'medium'));
+  const bot = useRef(makeBot('tag', 'Heuristic Bot'));
 
   useEffect(() => {
     if (!autoPlay || !state || state.isHandOver) return;

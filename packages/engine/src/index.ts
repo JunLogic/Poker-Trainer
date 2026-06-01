@@ -30,7 +30,8 @@ export { createInitialState } from './state.js';
 export { createDeck, shuffle } from './deck.js';
 export { evaluateHand, compareHandRanks } from './handEvaluator.js';
 export { estimateEquity } from './monteCarlo.js';
-export { HeuristicBot } from './bot.js';
+export { HeuristicBot, CfrBot, makeBot, BOT_PROFILES, DEFAULT_PROFILE_KEYS } from './bot.js';
+export type { BotProfile } from './bot.js';
 export { SimpleCoach } from './coach.js';
 
 export {

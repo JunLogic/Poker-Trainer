@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { nanoid } from 'nanoid';
-import { whoseTurn, legalActions, evaluateHand, compareHandRanks, HeuristicBot } from '@poker/engine';
+import { whoseTurn, legalActions, evaluateHand, compareHandRanks, makeBot } from '@poker/engine';
 import type { GameState, Action, LegalAction } from '@poker/engine';
 import { PokerTableLayout } from '../table/PokerTableLayout.js';
 import { BetSizingControls } from './BetSizingControls.js';
@@ -38,7 +38,7 @@ export function PracticeTable({
   const awardedRef = useRef(false);
   // Prevent firing onHandComplete more than once per hand
   const completedRef = useRef(false);
-  const botRef = useRef(new HeuristicBot('Bot', difficulty));
+  const botRef = useRef(makeBot('tag', 'Bot'));
 
   const currentId = whoseTurn(state);
   const isHeroTurn = currentId === heroId;
