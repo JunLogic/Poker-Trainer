@@ -5,7 +5,9 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspace=packages/engine",
-    "dev": "npm run dev --workspace=packages/web"
+    "dev": "npm run dev --workspace=packages/web",
+    "dev:host": "npm run dev:host --workspace=packages/web",
+    "gen:icons": "node scripts/gen-icons.mjs"
   },
   "devDependencies": {
     "typescript": "^5.4.0"
