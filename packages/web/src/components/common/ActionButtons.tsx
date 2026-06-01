@@ -6,9 +6,15 @@ import { useGameStore } from '../../store/gameStore.js';
 interface Props {
   legal: LegalAction[];
   playerId: PlayerId;
+  /**
+   * Optional intercept. When provided, called instead of dispatching directly
+   * to the store — lets a parent (e.g. PracticeTable) capture a thought first.
+   * When absent, falls back to direct appendAction (umpire mode behaviour).
+   */
+  onAction?: (action: Action) => void;
 }
 
-export function ActionButtons({ legal, playerId }: Props) {
+export function ActionButtons({ legal, playerId, onAction }: Props) {
   const appendAction = useGameStore(s => s.appendAction);
   const [raiseAmount, setRaiseAmount] = useState<number | null>(null);
 
@@ -26,7 +32,11 @@ export function ActionButtons({ legal, playerId }: Props) {
   const currentRaise = raiseAmount ?? defaultRaise;
 
   function dispatch(action: Action) {
-    appendAction(action);
+    if (onAction) {
+      onAction(action);
+    } else {
+      appendAction(action);
+    }
     setRaiseAmount(null);
   }
 
@@ -75,18 +85,13 @@ export function ActionButtons({ legal, playerId }: Props) {
       {betRaise && (
         <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
           <input
-            type="range"
-            min={betRaise.min}
-            max={betRaise.max}
-            step={1}
+            type="range" min={betRaise.min} max={betRaise.max} step={1}
             value={currentRaise}
             onChange={e => setRaiseAmount(Number(e.target.value))}
             style={{ flex: 1 }}
           />
           <input
-            type="number"
-            min={betRaise.min}
-            max={betRaise.max}
+            type="number" min={betRaise.min} max={betRaise.max}
             value={currentRaise}
             onChange={e => {
               const v = Math.max(betRaise.min, Math.min(betRaise.max, Number(e.target.value)));

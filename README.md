@@ -23,11 +23,21 @@ Physical cards sit on the table. You type every action (fold, call, raise, bet).
 - At showdown, enter each player's cards via the card picker — the evaluator determines the winner automatically
 
 ### Practice mode
-Virtual deck, Monte Carlo equity bar, and a heuristic bot opponent:
-- Your hole cards are visible; the bot's cards flip face-up at showdown
-- Real-time equity bar updates on every street via a Comlink web worker (never blocks the main thread)
-- SimpleCoach shows a post-action hint comparing your equity to pot odds
-- Auto-play toggle lets the bot act with a 600 ms delay (human-like pacing)
+Visual poker table UI (responsive — oval felt on desktop, stacked column on mobile):
+- Rendered playing cards (pure CSS, scales crisply, no image assets): your hole cards face-up, bot's face-down until showdown
+- Community cards revealed street-by-street with a short visual pause; board auto-dealt, blinds auto-posted
+- Live equity bar (your win % via Monte Carlo, runs in a web worker off the main thread)
+- Action controls driven by the engine's `legalActions()`: quick-size buttons (½ pot, ¾ pot, pot, all-in) plus a slider and numeric input bounded by the engine's min-raise and all-in
+- Bot auto-plays with a 700 ms delay so moves are readable; toggle off to step through manually
+- **Thoughts log**: before (or just after) each of your decisions, an optional text field lets you jot your reasoning. Equity %, pot, and pot-odds context are shown automatically. Thoughts are never required — skip and play proceeds immediately.
+
+### Thoughts log — how to use
+1. Play a practice hand. When it's your turn, a text area appears above the action buttons showing your equity and pot odds.
+2. Type your reasoning (or leave it blank and click an action to skip).
+3. When the hand ends a **Hand Summary** overlay shows every one of your decisions in a table: street, pot, equity, action taken, and your logged thought.
+4. In **Hand History → Replay**, step through any past hand. At each of your decision steps a gold quote block appears inline showing the thought you logged at that moment plus the equity and pot context.
+
+The thoughts are stored as a parallel annotation map (keyed by `Action.id`) — completely separate from the engine's pure action types. They're persisted in IndexedDB alongside the hand record.
 
 ### Hand history
 Every completed hand is stored in IndexedDB and survives reloads. Step through any past hand action-by-action with the replay viewer.
@@ -59,11 +69,18 @@ packages/
       state        createInitialState(config) → GameState
   web/             React + Vite PWA
     src/
-      store/       Zustand: gameStore (actionLog only), settingsStore, historyStore
-      db/          idb: openHandDb, saveHand, listHands
-      hooks/       useGameState (memoised replay), useLegalActions, useEquity, useBot
+      types/       thoughts.ts — ThoughtEntry + HandAnnotations (parallel annotation layer)
+      store/       Zustand: gameStore (actionLog), thoughtsStore, practiceStore, historyStore
+      db/          idb v2: hands + annotations object stores
+      hooks/       useGameState (memoised replay), useLegalActions, useEquity
       workers/     equity.worker.ts — Comlink-wrapped Monte Carlo
-      components/  Umpire, Practice, History, common UI
+      components/
+        cards/     PlayingCard — pure CSS/HTML, no image assets, 4 sizes
+        table/     PokerTableLayout (responsive oval), SeatCard
+        practice/  PracticeTable, BetSizingControls (quick-size buttons), ThoughtInput
+        history/   HandHistoryList, HandReplayViewer (thoughts inline), HandSummaryView
+        umpire/    UmpireTable, UmpireSetup, ShowdownPanel, BettingControls
+        common/    ActionButtons, CardPicker, ChipDisplay, PlayerSeat
 ```
 
 ## Architecture: event sourcing

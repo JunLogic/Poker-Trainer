@@ -59,3 +59,37 @@ h1, h2, h3 { font-weight: 700; }
   font-size: 0.85rem;
   color: var(--color-gold);
 }
+
+/* ── Responsive poker table ──────────────────────────────────────────────── */
+/* Mobile-first: show stacked layout, hide oval layout */
+.table-mobile  { display: block; }
+.table-desktop { display: none;  }
+
+@media (min-width: 640px) {
+  .table-mobile  { display: none;  }
+  .table-desktop { display: block; }
+}
+
+/* Smooth card transitions */
+.card-enter {
+  animation: card-flip 0.25s ease-out both;
+}
+@keyframes card-flip {
+  from { opacity: 0; transform: rotateY(90deg) scale(0.8); }
+  to   { opacity: 1; transform: rotateY(0deg)  scale(1);   }
+}
+
+/* Range slider polish */
+input[type="range"] {
+  appearance: none; height: 4px;
+  background: rgba(255,255,255,0.15); border-radius: 2px; outline: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: var(--color-gold); cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; border: none;
+  background: var(--color-gold); cursor: pointer;
+}
