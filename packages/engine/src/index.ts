@@ -32,3 +32,11 @@ export { evaluateHand, compareHandRanks } from './handEvaluator.js';
 export { estimateEquity } from './monteCarlo.js';
 export { HeuristicBot } from './bot.js';
 export { SimpleCoach } from './coach.js';
+
+export {
+  createMatch, startNextHand, applyHandResult, assignBlinds, rotateButton,
+  survivingPlayers, isMatchOver, matchWinner,
+} from './match.js';
+export type {
+  MatchPlayerConfig, MatchConfig, MatchEvent, MatchState, BlindAssignment, NextHand,
+} from './match.js';
