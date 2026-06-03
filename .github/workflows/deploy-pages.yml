@@ -36,8 +36,17 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: SPA fallback + .nojekyll
+        run: |
+          cp packages/web/dist/index.html packages/web/dist/404.html
+          touch packages/web/dist/.nojekyll
+
       - name: Configure Pages
         uses: actions/configure-pages@v5
+        with:
+          # Enable Pages with the "GitHub Actions" source using the job token,
+          # so no manual repo-settings toggle is required for the first deploy.
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
