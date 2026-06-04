@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
+import {
+  Dismiss20Regular,
+  Checkmark20Regular,
+  Money20Regular,
+  ArrowUp20Filled,
+  Flash20Filled,
+} from '@fluentui/react-icons';
 import type { LegalAction, Action, PlayerId } from '@poker/engine';
 import { useGameStore } from '../../store/gameStore.js';
 
@@ -45,22 +52,22 @@ export function ActionButtons({ legal, playerId, onAction }: Props) {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {fold && (
           <button className="btn-fold" onClick={() => dispatch({ ...base, type: 'FOLD' })}>
-            Fold
+            <Dismiss20Regular /> Fold
           </button>
         )}
         {check && (
           <button className="btn-check" onClick={() => dispatch({ ...base, type: 'CHECK' })}>
-            Check
+            <Checkmark20Regular /> Check
           </button>
         )}
         {call && (
           <button className="btn-call" onClick={() => dispatch({ ...base, type: 'CALL', amount: call.amount })}>
-            Call {call.amount}
+            <Money20Regular /> Call <span className="tnum">{call.amount}</span>
           </button>
         )}
         {allIn && !raise && !bet && (
           <button className="btn-allin" onClick={() => dispatch({ ...base, type: 'ALL_IN', amount: allIn.amount })}>
-            All In ({allIn.amount})
+            <Flash20Filled /> All In (<span className="tnum">{allIn.amount}</span>)
           </button>
         )}
         {betRaise && (
@@ -72,12 +79,12 @@ export function ActionButtons({ legal, playerId, onAction }: Props) {
               amount: currentRaise,
             } as Action)}
           >
-            {betRaise.type === 'RAISE' ? 'Raise' : 'Bet'} to {currentRaise}
+            <ArrowUp20Filled /> {betRaise.type === 'RAISE' ? 'Raise' : 'Bet'} to <span className="tnum">{currentRaise}</span>
           </button>
         )}
         {betRaise && allIn && currentRaise >= betRaise.max && (
           <button className="btn-allin" onClick={() => dispatch({ ...base, type: 'ALL_IN', amount: allIn.amount })}>
-            All In ({allIn.amount})
+            <Flash20Filled /> All In (<span className="tnum">{allIn.amount}</span>)
           </button>
         )}
       </div>

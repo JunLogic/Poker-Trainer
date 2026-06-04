@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
+import { Gavel20Filled, Play20Filled } from '@fluentui/react-icons';
 import { useGameStore } from '../../store/gameStore.js';
 import { useSettingsStore } from '../../store/settingsStore.js';
 
@@ -34,7 +35,9 @@ export function UmpireSetup() {
 
   return (
     <div className="panel" style={{ maxWidth: 480, margin: '0 auto', marginTop: 32 }}>
-      <h2 style={{ marginBottom: 16, color: 'var(--color-gold)' }}>Umpire Mode Setup</h2>
+      <h2 style={{ marginBottom: 'var(--space-4)', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+        <Gavel20Filled style={{ color: 'var(--accent)' }} /> Umpire Mode Setup
+      </h2>
 
       <div style={{ marginBottom: 12 }}>
         <label style={{ display: 'block', marginBottom: 4, fontSize: '0.85rem' }}>Players</label>
@@ -94,8 +97,8 @@ export function UmpireSetup() {
         </select>
       </div>
 
-      <button className="btn-call" style={{ width: '100%', padding: '12px' }} onClick={handleStart}>
-        Start Hand
+      <button className="btn-primary" style={{ width: '100%', padding: 'var(--space-3)' }} onClick={handleStart}>
+        <Play20Filled /> Start Hand
       </button>
     </div>
   );

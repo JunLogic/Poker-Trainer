@@ -41,16 +41,16 @@ export function MatchInterstitial({
 
   return (
     <div style={{
-      position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(0,0,0,0.78)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16, backdropFilter: 'blur(3px)',
+      position: 'fixed', inset: 0, zIndex: 50, background: 'rgba(8,10,14,0.72)',
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 'var(--space-4)', backdropFilter: 'blur(3px)',
     }}>
       <div style={{
-        background: 'var(--color-felt-dark)', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 16,
-        padding: 24, width: '100%', maxWidth: 540, maxHeight: '85vh', overflowY: 'auto',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.7)',
+        background: 'var(--bg-elevated)', border: '1px solid var(--border)', borderRadius: 'var(--radius-xl)',
+        padding: 'var(--space-5)', width: '100%', maxWidth: 540, maxHeight: '85vh', overflowY: 'auto',
+        boxShadow: 'var(--shadow-pop)',
       }}>
-        <h2 style={{ color: 'var(--color-gold)', marginBottom: 4 }}>Hand complete</h2>
-        <div style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)', marginBottom: 16 }}>
+        <h2 style={{ marginBottom: 4 }}>Hand complete</h2>
+        <div className="tnum" style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
           Pot {record.summary.potTotal} · reached {record.summary.streetReached}
         </div>
 
@@ -62,20 +62,20 @@ export function MatchInterstitial({
             const delta = after - before;
             const busted = eliminatedThisHand.includes(id);
             return (
-              <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.85rem' }}>
-                <span style={{ width: 90, fontWeight: id === heroId ? 700 : 400, color: id === heroId ? 'var(--color-gold)' : 'var(--color-text)' }}>
+              <div key={id} className="tnum" style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 'var(--text-sm)' }}>
+                <span style={{ width: 90, fontWeight: id === heroId ? 600 : 400, color: id === heroId ? 'var(--accent-strong)' : 'var(--text-primary)' }}>
                   {nameOf(id)}
                 </span>
-                <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--color-text-dim)' }}>{before}</span>
-                <span style={{ color: 'var(--color-text-dim)' }}>→</span>
+                <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{before}</span>
+                <span style={{ color: 'var(--text-muted)' }}>→</span>
                 <span style={{ fontFamily: 'var(--font-mono)' }}>{after}</span>
                 <span style={{
-                  fontFamily: 'var(--font-mono)', fontSize: '0.78rem',
-                  color: delta > 0 ? 'var(--color-call)' : delta < 0 ? 'var(--color-fold)' : 'var(--color-text-dim)',
+                  fontFamily: 'var(--font-mono)', fontSize: 'var(--text-sm)',
+                  color: delta > 0 ? 'var(--success)' : delta < 0 ? 'var(--danger)' : 'var(--text-muted)',
                 }}>
                   {delta > 0 ? `+${delta}` : delta}
                 </span>
-                {busted && <span style={{ fontSize: '0.7rem', color: 'var(--color-fold)', fontWeight: 700 }}>BUSTED</span>}
+                {busted && <span style={{ fontSize: 'var(--text-xs)', color: 'var(--danger)', fontWeight: 600, letterSpacing: '0.04em' }}>BUSTED</span>}
               </div>
             );
           })}
@@ -83,27 +83,27 @@ export function MatchInterstitial({
 
         {/* Hero decisions + thoughts */}
         {decisions.length > 0 && (
-          <div style={{ marginBottom: 16 }}>
-            <div style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 }}>
+          <div style={{ marginBottom: 'var(--space-4)' }}>
+            <div className="eyebrow" style={{ marginBottom: 'var(--space-2)' }}>
               Your decisions
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
               {decisions.map(({ action, street, pot, thought, verdict }) => (
-                <div key={action.id} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '6px 10px', fontSize: '0.8rem' }}>
-                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <span style={{ color: 'var(--color-text-dim)', textTransform: 'capitalize' }}>{street}</span>
-                    <span style={{ color: 'var(--color-text-dim)' }}>pot {pot}</span>
-                    <span style={{ marginLeft: 'auto', fontWeight: 700 }}>
+                <div key={action.id} style={{ background: 'var(--bg-raised)', border: '1px solid var(--border-subtle)', borderRadius: 'var(--radius-md)', padding: '8px 10px', fontSize: 'var(--text-sm)' }}>
+                  <div className="tnum" style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
+                    <span style={{ color: 'var(--text-muted)', textTransform: 'capitalize' }}>{street}</span>
+                    <span style={{ color: 'var(--text-muted)' }}>pot {pot}</span>
+                    <span style={{ marginLeft: 'auto', fontWeight: 600 }}>
                       {action.type}{'amount' in action && typeof action.amount === 'number' ? ` ${action.amount}` : ''}
                     </span>
                   </div>
                   {thought?.thought && (
-                    <div style={{ borderLeft: '3px solid rgba(212,168,67,0.5)', paddingLeft: 8, marginTop: 4, fontStyle: 'italic', color: 'var(--color-text)' }}>
+                    <div style={{ borderLeft: '2px solid var(--accent)', paddingLeft: 'var(--space-2)', marginTop: 4, fontStyle: 'italic', color: 'var(--text-secondary)' }}>
                       "{thought.thought}"
                     </div>
                   )}
                   {verdict && (
-                    <div style={{ marginTop: 5, color: verdict.covered ? 'var(--color-text)' : 'var(--color-text-dim)' }}>
+                    <div className="tnum" style={{ marginTop: 5, color: verdict.covered ? 'var(--text-secondary)' : 'var(--text-muted)' }}>
                       Strategy: {verdict.covered ? `${verdict.score}/${verdict.maxScore}` : 'uncovered'} · {verdict.conceptTrained}
                     </div>
                   )}
@@ -115,7 +115,7 @@ export function MatchInterstitial({
 
         <StrategyWeaknessDashboard verdicts={strategyVerdicts} compact />
 
-        <button className="btn-call" style={{ width: '100%', padding: 10 }} onClick={onNext}>
+        <button className="btn-primary" style={{ width: '100%', padding: 'var(--space-3)', marginTop: 'var(--space-2)' }} onClick={onNext}>
           {matchOver ? 'View match results' : 'Next hand'}
         </button>
       </div>

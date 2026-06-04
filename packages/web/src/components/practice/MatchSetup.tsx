@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
+import { Target20Regular, Play20Filled } from '@fluentui/react-icons';
 import { BOT_PROFILES, DEFAULT_PROFILE_KEYS, listStrategyProfiles } from '@poker/engine';
 import type { DifficultyLevel } from '@poker/engine';
 import type { MatchConfig } from '@poker/engine';
@@ -67,8 +68,8 @@ export function MatchSetup({ onStart }: Props) {
 
   return (
     <div className="panel" style={{ maxWidth: 420, margin: '32px auto' }}>
-      <h2 style={{ marginBottom: 4, color: 'var(--color-gold)' }}>New Match</h2>
-      <p style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)', marginBottom: 16 }}>
+      <h2 style={{ marginBottom: 4 }}>New Match</h2>
+      <p style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)', marginBottom: 'var(--space-4)' }}>
         Play hands until one player remains. Stacks carry over; the button rotates each hand.
       </p>
 
@@ -115,14 +116,14 @@ export function MatchSetup({ onStart }: Props) {
       </label>
 
       <div style={{
-        border: '1px solid rgba(255,255,255,0.1)',
-        borderRadius: 8,
-        padding: 10,
-        marginBottom: 16,
-        background: 'rgba(255,255,255,0.03)',
+        border: '1px solid var(--border-subtle)',
+        borderRadius: 'var(--radius-md)',
+        padding: 'var(--space-3)',
+        marginBottom: 'var(--space-4)',
+        background: 'var(--bg-raised)',
       }}>
-        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 }}>
-          Strategy Trainer
+        <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 'var(--space-2)' }}>
+          <Target20Regular style={{ fontSize: 16 }} /> Strategy Trainer
         </div>
         <div style={{ display: 'grid', gap: 8 }}>
           <label style={{ display: 'grid', gap: 4, fontSize: '0.85rem' }}>
@@ -148,8 +149,8 @@ export function MatchSetup({ onStart }: Props) {
         </div>
       </div>
 
-      <button className="btn-call" style={{ width: '100%', padding: 12 }} onClick={handleStart}>
-        Start Match
+      <button className="btn-primary" style={{ width: '100%', padding: 'var(--space-3)' }} onClick={handleStart}>
+        <Play20Filled /> Start Match
       </button>
     </div>
   );

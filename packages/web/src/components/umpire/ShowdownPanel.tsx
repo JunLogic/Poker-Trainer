@@ -3,8 +3,8 @@ import { nanoid } from 'nanoid';
 import { evaluateHand, compareHandRanks, buildSidePots } from '@poker/engine';
 import type { GameState, Card, Player } from '@poker/engine';
 import { CardPicker } from '../common/CardPicker.js';
-import { ChipDisplay } from '../common/ChipDisplay.js';
 import { useGameStore } from '../../store/gameStore.js';
+import { SUIT_SYMBOLS, suitInk } from '../cards/suits.js';
 
 interface Props {
   state: GameState;
@@ -120,23 +120,19 @@ export function ShowdownPanel({ state }: Props) {
     }
   }
 
-  const cardSymbol = (suit: string) => ({ h: '♥', d: '♦', c: '♣', s: '♠' })[suit] ?? '';
-  const suitColor = (suit: string) =>
-    ({ h: 'var(--suit-hearts)', d: 'var(--suit-diamonds)', c: 'var(--suit-clubs)', s: 'var(--suit-spades)' })[suit] ?? '';
-
   return (
     <div className="panel">
-      <h3 style={{ marginBottom: 12, color: 'var(--color-gold)' }}>Showdown</h3>
-      <p style={{ marginBottom: 16, fontSize: '0.85rem', color: 'var(--color-text-dim)' }}>
+      <h3 style={{ marginBottom: 'var(--space-3)' }}>Showdown</h3>
+      <p style={{ marginBottom: 'var(--space-4)', fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>
         Enter each player's hole cards, then click Award Pots.
       </p>
 
       {eligible.map(player => {
         const pair = cards[player.id];
         return (
-          <div key={player.id} style={{ marginBottom: 12 }}>
-            <div style={{ fontWeight: 700, marginBottom: 6 }}>{player.name}</div>
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+          <div key={player.id} style={{ marginBottom: 'var(--space-3)' }}>
+            <div style={{ fontWeight: 600, marginBottom: 6 }}>{player.name}</div>
+            <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'center' }}>
               {([0, 1] as const).map(slot => {
                 const card = pair?.[slot];
                 const isSelecting = selectingFor?.playerId === player.id && selectingFor?.slot === slot;
@@ -145,20 +141,21 @@ export function ShowdownPanel({ state }: Props) {
                     key={slot}
                     onClick={() => setSelectingFor({ playerId: player.id, slot })}
                     style={{
-                      width: 44, height: 60,
-                      background: card ? 'var(--color-card-bg)' : 'rgba(255,255,255,0.05)',
-                      border: isSelecting ? '2px solid var(--color-gold)' : '1px dashed rgba(255,255,255,0.3)',
-                      borderRadius: 6,
-                      color: card ? suitColor(card.suit) : 'rgba(255,255,255,0.3)',
-                      fontWeight: 700, fontSize: '1rem',
+                      width: 44, height: 60, padding: 0,
+                      background: card ? 'var(--card-face)' : 'var(--bg-input)',
+                      border: isSelecting ? '1.5px solid var(--accent)' : '1px dashed var(--border-strong)',
+                      boxShadow: isSelecting ? '0 0 0 3px var(--accent-soft)' : 'none',
+                      borderRadius: 'var(--radius-sm)',
+                      color: card ? suitInk(card.suit) : 'var(--text-faint)',
+                      fontWeight: 700, fontSize: 'var(--text-md)',
                     }}
                   >
-                    {card ? `${card.rank}${cardSymbol(card.suit)}` : '?'}
+                    {card ? `${card.rank}${SUIT_SYMBOLS[card.suit]}` : '?'}
                   </button>
                 );
               })}
               {pair && (
-                <span style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>
+                <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
                   {(() => {
                     const boardCards = [
                       ...(state.board.flop ?? []),
@@ -179,8 +176,8 @@ export function ShowdownPanel({ state }: Props) {
       })}
 
       {selectingFor && (
-        <div style={{ marginTop: 12 }}>
-          <div style={{ marginBottom: 8, fontSize: '0.85rem' }}>
+        <div style={{ marginTop: 'var(--space-3)' }}>
+          <div style={{ marginBottom: 'var(--space-2)', fontSize: 'var(--text-sm)' }}>
             Select card for {eligible.find(p => p.id === selectingFor.playerId)?.name}
             {' '}(slot {selectingFor.slot + 1}):
           </div>
@@ -189,8 +186,8 @@ export function ShowdownPanel({ state }: Props) {
       )}
 
       <button
-        className="btn-call"
-        style={{ marginTop: 16, width: '100%' }}
+        className="btn-primary"
+        style={{ marginTop: 'var(--space-4)', width: '100%' }}
         onClick={awardPots}
       >
         Award Pots

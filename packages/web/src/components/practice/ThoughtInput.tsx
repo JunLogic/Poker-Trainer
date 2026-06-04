@@ -13,19 +13,19 @@ export function ThoughtInput({ equity, pot, betToCall, value, onChange }: Props)
 
   return (
     <div style={{
-      background: 'rgba(0,0,0,0.3)',
-      border: '1px solid rgba(255,255,255,0.12)',
-      borderRadius: 10, padding: '10px 12px', marginBottom: 10,
+      background: 'var(--bg-surface)',
+      border: '1px solid var(--border-subtle)',
+      borderRadius: 'var(--radius-md)', padding: 'var(--space-3)', marginBottom: 'var(--space-3)',
     }}>
       {/* Context line */}
-      <div style={{ display: 'flex', gap: 16, marginBottom: 8, fontSize: '0.75rem', color: 'var(--color-text-dim)' }}>
-        <span>Equity <strong style={{ color: equity > 0.5 ? 'var(--color-call)' : 'var(--color-gold)' }}>{(equity * 100).toFixed(0)}%</strong></span>
-        {pot > 0 && <span>Pot <strong style={{ color: 'var(--color-text)' }}>{pot}</strong></span>}
+      <div className="tnum" style={{ display: 'flex', gap: 'var(--space-4)', marginBottom: 'var(--space-2)', fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
+        <span>Equity <strong style={{ color: equity > 0.5 ? 'var(--success)' : 'var(--text-primary)' }}>{(equity * 100).toFixed(0)}%</strong></span>
+        {pot > 0 && <span>Pot <strong style={{ color: 'var(--text-primary)' }}>{pot}</strong></span>}
         {betToCall > 0 && (
           <span>
             Call {betToCall}
             {potOdds > 0 && (
-              <span style={{ color: potOdds < equity ? 'var(--color-call)' : 'var(--color-fold)' }}>
+              <span style={{ color: potOdds < equity ? 'var(--success)' : 'var(--danger)' }}>
                 {' '}({(potOdds * 100).toFixed(0)}% odds)
               </span>
             )}
@@ -41,17 +41,12 @@ export function ThoughtInput({ equity, pot, betToCall, value, onChange }: Props)
         rows={2}
         style={{
           width: '100%', resize: 'none', fontFamily: 'var(--font-sans)',
-          fontSize: '0.82rem', lineHeight: 1.5,
-          background: 'rgba(255,255,255,0.05)',
-          border: '1px solid rgba(255,255,255,0.1)',
-          borderRadius: 6, padding: '6px 8px',
-          color: 'var(--color-text)',
-          outline: 'none',
+          fontSize: 'var(--text-sm)', lineHeight: 'var(--leading-normal)',
           boxSizing: 'border-box',
         }}
       />
       {value.length > 0 && (
-        <div style={{ fontSize: '0.65rem', color: 'var(--color-text-dim)', marginTop: 2, textAlign: 'right' }}>
+        <div className="tnum" style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', marginTop: 2, textAlign: 'right' }}>
           {value.length}/300
         </div>
       )}

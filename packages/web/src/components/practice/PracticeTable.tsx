@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { nanoid } from 'nanoid';
+import { Person20Filled, Bot20Regular } from '@fluentui/react-icons';
 import {
   whoseTurn,
   legalActions,
@@ -271,15 +272,15 @@ export function PracticeTable({
       />
 
       <div style={{ padding: '0 12px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8, minHeight: 28 }}>
-          <span style={{ fontSize: '0.85rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-2)', minHeight: 28 }}>
+          <span style={{ fontSize: 'var(--text-sm)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
             {isHeroTurn
-              ? <span style={{ color: 'var(--color-gold)', fontWeight: 700 }}>Your turn</span>
+              ? <span style={{ color: 'var(--accent-strong)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6 }}><Person20Filled style={{ fontSize: 18 }} /> Your turn</span>
               : currentId
-                ? <span style={{ color: 'var(--color-text-dim)' }}>{state.players.find(p => p.id === currentId)?.name ?? currentId} thinking…</span>
+                ? <span style={{ color: 'var(--text-muted)', display: 'inline-flex', alignItems: 'center', gap: 6 }}><Bot20Regular style={{ fontSize: 18 }} /> {state.players.find(p => p.id === currentId)?.name ?? currentId} thinking…</span>
                 : null}
           </span>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', cursor: 'pointer', color: 'var(--color-text-dim)' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 'var(--text-sm)', cursor: 'pointer', color: 'var(--text-muted)' }}>
             <input type="checkbox" checked={autoPlay} onChange={e => setAutoPlay(e.target.checked)} />
             Auto-play bots
           </label>

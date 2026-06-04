@@ -1,40 +1,280 @@
+/* ============================================================================
+   DESIGN TOKENS — single source of truth
+   ----------------------------------------------------------------------------
+   Matte, calm, modern. No green felt, no gloss, no neon. Surfaces are
+   distinguished by subtle background steps + hairline borders first, soft
+   diffuse shadows second. ALL components consume these variables; no hardcoded
+   hex / spacing / shadow values should live in components.
+
+   Layers:
+     1. Primitive scales (gray ramp, accent ramp, raw radii/space/type).
+     2. Semantic aliases (surface / text / border / state) — theme-mapped.
+     3. Legacy aliases (old --color-* names) re-pointed at the new palette so
+        every component renders matte even before it is refactored.
+
+   Default theme is matte-dark (Offsuit-spirit). A light theme mirrors every
+   semantic token and activates with [data-theme="light"] or, automatically,
+   prefers-color-scheme: light.
+   ========================================================================== */
+
 :root {
-  --color-felt: #1a472a;
-  --color-felt-dark: #0f2d1a;
-  --color-felt-light: #2d6a42;
-  --color-card-bg: #f8f4e8;
-  --color-card-border: #c9b88a;
-  --color-text: #e8f0e8;
-  --color-text-dim: #8aab8a;
-  --color-text-dark: #1a2a1a;
-  --color-gold: #d4a843;
-  --color-fold: #c0392b;
-  --color-call: #27ae60;
-  --color-raise: #2980b9;
-  --color-allin: #8e44ad;
+  /* ── Primitive: cool-gray neutral ramp (8+ steps) ──────────────────────── */
+  --gray-950: #0e1014;
+  --gray-900: #141720;
+  --gray-850: #1a1e28;
+  --gray-800: #21262f;
+  --gray-750: #282e39;
+  --gray-700: #333a47;
+  --gray-600: #454d5d;
+  --gray-500: #646d80;
+  --gray-400: #8a93a6;
+  --gray-300: #aab2c2;
+  --gray-200: #c9cfdb;
+  --gray-100: #e5e8ef;
+  --gray-50:  #f4f6fa;
 
-  --suit-hearts: #c0392b;
-  --suit-diamonds: #c0392b;
-  --suit-spades: #1a1a1a;
-  --suit-clubs: #1a1a1a;
+  /* ── Primitive: ONE restrained accent (desaturated indigo) ─────────────── */
+  --accent-700: #3d4f86;
+  --accent-600: #4c61a3;
+  --accent-500: #6379c2;   /* base accent */
+  --accent-400: #8093d4;
+  --accent-300: #a6b3e2;
+  --accent-soft: rgba(99, 121, 194, 0.14);   /* tinted fill */
+  --accent-softer: rgba(99, 121, 194, 0.08);
 
-  --radius-card: 6px;
-  --radius-panel: 12px;
-  --radius-btn: 8px;
+  /* ── Primitive: small semantic colors (low saturation, no neon) ────────── */
+  --green-500: #5d9e74;    /* success / win */
+  --green-soft: rgba(93, 158, 116, 0.14);
+  --red-500:   #c66b6b;    /* danger / fold */
+  --red-soft:  rgba(198, 107, 107, 0.14);
+  --blue-500:  #5f8bbf;    /* info */
+  --blue-soft: rgba(95, 139, 191, 0.14);
+  --amber-500: #c79a55;    /* caution / all-in */
+  --amber-soft: rgba(199, 154, 85, 0.14);
+  --violet-500: #8a7bc0;   /* all-in accent */
+  --violet-soft: rgba(138, 123, 192, 0.14);
 
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
-  --shadow-panel: 0 4px 16px rgba(0, 0, 0, 0.5);
+  /* ── Primitive: playing-card surface + suit inks ───────────────────────── */
+  --card-face: #f6f5f1;
+  --card-face-edge: #e6e3da;
+  --card-ink: #20242c;          /* black suits */
+  --card-ink-red: #b6403c;      /* red suits (2-color deck) */
+  /* 4-color deck inks */
+  --suit-spade-4: #20242c;      /* spade  – black  */
+  --suit-heart-4: #b6403c;      /* heart  – red    */
+  --suit-diamond-4: #3168a8;    /* diamond – blue  */
+  --suit-club-4: #2f7d52;       /* club   – green  */
 
-  --font-mono: 'SF Mono', 'Fira Code', monospace;
-  --font-sans: system-ui, -apple-system, sans-serif;
+  /* ── Radius scale (soft, friendly) ─────────────────────────────────────── */
+  --radius-xs: 4px;
+  --radius-sm: 7px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-pill: 999px;
 
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 40px;
+  /* ── Spacing scale (8pt base, 4 half-step) ─────────────────────────────── */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
 
-  /* Table layout */
-  --table-rail-color: #6b4c14;
+  /* ── Typography ────────────────────────────────────────────────────────── */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, 'Roboto Mono', 'Fira Code', Menlo, monospace;
+
+  --text-xs:   0.72rem;
+  --text-sm:   0.82rem;
+  --text-base: 0.92rem;
+  --text-md:   1rem;
+  --text-lg:   1.2rem;
+  --text-xl:   1.5rem;
+  --text-2xl:  2rem;
+
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --tracking-wide: 0.04em;
+
+  /* ── Iconography sizing (Fluent UI icons) ──────────────────────────────── */
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+
+  /* ── Motion (subtle, fast, ease-out; no bounce) ────────────────────────── */
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 110ms;
+  --dur: 170ms;
+  --dur-slow: 280ms;
+
+  /* ====================================================================== */
+  /* SEMANTIC ALIASES — matte DARK (default theme)                          */
+  /* ====================================================================== */
+
+  /* Surfaces — distinguished by background steps + hairlines */
+  --bg-app: var(--gray-950);
+  --bg-surface: var(--gray-900);     /* primary panels */
+  --bg-raised: var(--gray-850);      /* nested / inputs base */
+  --bg-elevated: var(--gray-800);    /* modals, popovers */
+  --bg-hover: rgba(255, 255, 255, 0.05);
+  --bg-input: rgba(255, 255, 255, 0.04);
+  --bg-inset: rgba(0, 0, 0, 0.22);
+
+  /* The poker table surface — matte, NOT felt */
+  --table-surface-from: #1c222c;
+  --table-surface-to: #161a22;
+  --table-rail: #2a313d;
+
+  /* Borders — hairlines */
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border: rgba(255, 255, 255, 0.10);
+  --border-strong: rgba(255, 255, 255, 0.16);
+
+  /* Text */
+  --text-primary: #e7eaf0;
+  --text-secondary: #aab2c2;
+  --text-muted: #757e90;
+  --text-faint: rgba(231, 234, 240, 0.28);
+  --text-on-accent: #ffffff;
+
+  /* State (semantic) */
+  --accent: var(--accent-500);
+  --accent-strong: var(--accent-400);
+  --success: var(--green-500);
+  --danger: var(--red-500);
+  --info: var(--blue-500);
+  --caution: var(--amber-500);
+  --allin: var(--violet-500);
+
+  --focus-ring: var(--accent-400);
+
+  /* Elevation — soft, diffuse, low-opacity, large blur, no hard edges */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.20);
+  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.26);
+  --shadow-lg: 0 14px 40px rgba(0, 0, 0, 0.34);
+  --shadow-pop: 0 22px 60px rgba(0, 0, 0, 0.50);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.28);
+
+  /* ====================================================================== */
+  /* LEGACY ALIASES — keep old --color-* names working, matte-mapped         */
+  /* (lets un-refactored components inherit the new look immediately)         */
+  /* ====================================================================== */
+  --color-felt: var(--table-surface-from);
+  --color-felt-dark: var(--bg-app);
+  --color-felt-light: var(--bg-elevated);
+  --color-card-bg: var(--card-face);
+  --color-card-border: var(--card-face-edge);
+  --color-text: var(--text-primary);
+  --color-text-dim: var(--text-secondary);
+  --color-text-dark: var(--card-ink);
+  --color-gold: var(--accent);          /* gold → calm accent */
+  --color-fold: var(--danger);
+  --color-call: var(--success);
+  --color-raise: var(--accent);
+  --color-allin: var(--allin);
+  --color-check: var(--info);
+
+  --suit-hearts: var(--card-ink-red);
+  --suit-diamonds: var(--card-ink-red);
+  --suit-spades: var(--card-ink);
+  --suit-clubs: var(--card-ink);
+
+  --radius-card: var(--radius-sm);
+  --radius-panel: var(--radius-lg);
+  --radius-btn: var(--radius-md);
+
+  --shadow-panel: var(--shadow-md);
+
+  --spacing-xs: var(--space-1);
+  --spacing-sm: var(--space-2);
+  --spacing-md: var(--space-4);
+  --spacing-lg: var(--space-5);
+  --spacing-xl: var(--space-7);
+
+  --table-rail-color: var(--table-rail);
   --table-max-width: 700px;
+
+  color-scheme: dark;
+}
+
+/* ========================================================================== */
+/* LIGHT THEME — mirrors every semantic token                                 */
+/* Activates explicitly via [data-theme="light"] or by OS preference.         */
+/* ========================================================================== */
+:root[data-theme='light'],
+:root[data-theme='light'] body {
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']) { color-scheme: light; }
+}
+
+:root[data-theme='light'] {
+  --bg-app: var(--gray-50);
+  --bg-surface: #ffffff;
+  --bg-raised: var(--gray-50);
+  --bg-elevated: #ffffff;
+  --bg-hover: rgba(15, 18, 26, 0.04);
+  --bg-input: rgba(15, 18, 26, 0.03);
+  --bg-inset: rgba(15, 18, 26, 0.04);
+
+  --table-surface-from: #eef1f6;
+  --table-surface-to: #e4e8f0;
+  --table-rail: #d2d8e2;
+
+  --border-subtle: rgba(15, 18, 26, 0.06);
+  --border: rgba(15, 18, 26, 0.12);
+  --border-strong: rgba(15, 18, 26, 0.20);
+
+  --text-primary: #1a1f2a;
+  --text-secondary: #4d566a;
+  --text-muted: #7e8799;
+  --text-faint: rgba(26, 31, 42, 0.32);
+
+  --shadow-sm: 0 1px 2px rgba(20, 25, 40, 0.08);
+  --shadow-md: 0 6px 18px rgba(20, 25, 40, 0.10);
+  --shadow-lg: 0 14px 40px rgba(20, 25, 40, 0.14);
+  --shadow-pop: 0 22px 60px rgba(20, 25, 40, 0.20);
+  --shadow-card: 0 1px 3px rgba(20, 25, 40, 0.14);
+}
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme='dark']):not([data-theme='light']) {
+    --bg-app: var(--gray-50);
+    --bg-surface: #ffffff;
+    --bg-raised: var(--gray-50);
+    --bg-elevated: #ffffff;
+    --bg-hover: rgba(15, 18, 26, 0.04);
+    --bg-input: rgba(15, 18, 26, 0.03);
+    --bg-inset: rgba(15, 18, 26, 0.04);
+
+    --table-surface-from: #eef1f6;
+    --table-surface-to: #e4e8f0;
+    --table-rail: #d2d8e2;
+
+    --border-subtle: rgba(15, 18, 26, 0.06);
+    --border: rgba(15, 18, 26, 0.12);
+    --border-strong: rgba(15, 18, 26, 0.20);
+
+    --text-primary: #1a1f2a;
+    --text-secondary: #4d566a;
+    --text-muted: #7e8799;
+    --text-faint: rgba(26, 31, 42, 0.32);
+
+    --shadow-sm: 0 1px 2px rgba(20, 25, 40, 0.08);
+    --shadow-md: 0 6px 18px rgba(20, 25, 40, 0.10);
+    --shadow-lg: 0 14px 40px rgba(20, 25, 40, 0.14);
+    --shadow-pop: 0 22px 60px rgba(20, 25, 40, 0.20);
+    --shadow-card: 0 1px 3px rgba(20, 25, 40, 0.14);
+  }
 }

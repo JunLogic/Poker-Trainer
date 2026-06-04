@@ -22,7 +22,7 @@ function formatLegal(action: LegalAction): string {
 export function BettingControls({ state, legal, currentPlayer }: Props) {
   return (
     <div>
-      <div style={{ marginBottom: 10, fontSize: '0.8rem', color: 'var(--color-text-dim)' }}>
+      <div className="tnum" style={{ marginBottom: 'var(--space-3)', fontSize: 'var(--text-sm)', color: 'var(--text-muted)' }}>
         Legal options: {legal.map(formatLegal).join(' / ')}
       </div>
       <ActionButtons legal={legal} playerId={currentPlayer.id} />
