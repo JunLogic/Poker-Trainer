@@ -1,67 +1,137 @@
 @import './tokens.css';
 
+/* ── Reset ─────────────────────────────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body, #root {
   height: 100%;
   font-family: var(--font-sans);
-  background: var(--color-felt-dark);
-  color: var(--color-text);
+  font-size: 16px;
+  background: var(--bg-app);
+  color: var(--text-primary);
   -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
+body { line-height: var(--leading-normal); }
+
+/* Tabular figures everywhere numbers appear — digits never jitter. */
+.tnum, .chip-count, [data-num] {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1, 'cv01' 1;
+}
+
+::selection { background: var(--accent-soft); }
+
+/* ── Headings ──────────────────────────────────────────────────────────────── */
+h1, h2, h3, h4 { font-weight: var(--weight-semibold); line-height: var(--leading-tight); letter-spacing: -0.01em; }
+h1 { font-size: var(--text-2xl); }
+h2 { font-size: var(--text-xl); }
+h3 { font-size: var(--text-lg); }
+
+/* ── Buttons ───────────────────────────────────────────────────────────────── */
 button {
   font-family: inherit;
   cursor: pointer;
-  border: none;
-  border-radius: var(--radius-btn);
-  padding: var(--spacing-sm) var(--spacing-md);
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: opacity 0.15s, transform 0.1s;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-base);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  line-height: 1.1;
+  transition: background var(--dur) var(--ease-out),
+              border-color var(--dur) var(--ease-out),
+              color var(--dur) var(--ease-out),
+              opacity var(--dur) var(--ease-out),
+              transform var(--dur-fast) var(--ease-out);
 }
-button:active { transform: scale(0.97); }
-button:disabled { opacity: 0.4; cursor: not-allowed; }
+button:active { transform: translateY(0.5px) scale(0.99); }
+button:disabled { opacity: 0.38; cursor: not-allowed; }
 
-input, select {
+/* Default surface button */
+.btn {
+  background: var(--bg-raised);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+.btn:not(:disabled):hover { background: var(--bg-elevated); border-color: var(--border-strong); }
+
+/* Primary CTA — the single restrained accent */
+.btn-primary {
+  background: var(--accent-600);
+  border-color: var(--accent-600);
+  color: var(--text-on-accent);
+}
+.btn-primary:not(:disabled):hover { background: var(--accent-500); border-color: var(--accent-500); }
+
+/* Semantic action buttons (muted, low-saturation solids) */
+.btn-fold   { background: var(--red-soft);    border-color: rgba(198,107,107,0.4); color: var(--danger); }
+.btn-fold:not(:disabled):hover   { background: rgba(198,107,107,0.2); }
+.btn-call   { background: var(--green-500);   border-color: var(--green-500);  color: #fff; }
+.btn-call:not(:disabled):hover   { filter: brightness(1.06); }
+.btn-raise  { background: var(--accent-600);  border-color: var(--accent-600); color: #fff; }
+.btn-raise:not(:disabled):hover  { background: var(--accent-500); border-color: var(--accent-500); }
+.btn-check  { background: var(--bg-raised);    border-color: var(--border);     color: var(--text-primary); }
+.btn-check:not(:disabled):hover  { background: var(--bg-elevated); border-color: var(--border-strong); }
+.btn-allin  { background: var(--violet-soft); border-color: rgba(138,123,192,0.42); color: var(--allin); }
+.btn-allin:not(:disabled):hover  { background: rgba(138,123,192,0.22); }
+
+/* Quiet / ghost button */
+.btn-ghost  { background: transparent; border-color: var(--border); color: var(--text-secondary); }
+.btn-ghost:not(:disabled):hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-strong); }
+
+/* ── Inputs ────────────────────────────────────────────────────────────────── */
+input, select, textarea {
   font-family: inherit;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.15);
-  border-radius: var(--radius-btn);
-  color: var(--color-text);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 0.9rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text-primary);
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-base);
 }
-input:focus, select:focus {
-  outline: 2px solid var(--color-gold);
-  outline-offset: 1px;
+input[type='number'] { font-variant-numeric: tabular-nums; }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--focus-ring);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
-select option { background: var(--color-felt-dark); }
+select option { background: var(--bg-elevated); color: var(--text-primary); }
 
-h1, h2, h3 { font-weight: 700; }
+:focus-visible { outline: 2px solid var(--focus-ring); outline-offset: 2px; }
 
-.btn-fold   { background: var(--color-fold); color: #fff; }
-.btn-call   { background: var(--color-call); color: #fff; }
-.btn-raise  { background: var(--color-raise); color: #fff; }
-.btn-allin  { background: var(--color-allin); color: #fff; }
-.btn-check  { background: var(--color-felt-light); color: #fff; }
-.btn-ghost  { background: transparent; border: 1px solid rgba(255,255,255,0.25); color: var(--color-text); }
-
+/* ── Surfaces ──────────────────────────────────────────────────────────────── */
 .panel {
-  background: rgba(0,0,0,0.3);
-  border-radius: var(--radius-panel);
-  padding: var(--spacing-md);
-  box-shadow: var(--shadow-panel);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+}
+
+.eyebrow {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wide);
+  font-weight: var(--weight-semibold);
 }
 
 .chip-count {
   font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--color-gold);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-semibold);
+  color: var(--text-primary);
 }
 
 /* ── Responsive poker table ──────────────────────────────────────────────── */
-/* Mobile-first: show stacked layout, hide oval layout */
 .table-mobile  { display: block; }
 .table-desktop { display: none;  }
 
@@ -70,26 +140,40 @@ h1, h2, h3 { font-weight: 700; }
   .table-desktop { display: block; }
 }
 
-/* Smooth card transitions */
-.card-enter {
-  animation: card-flip 0.25s ease-out both;
-}
-@keyframes card-flip {
-  from { opacity: 0; transform: rotateY(90deg) scale(0.8); }
-  to   { opacity: 1; transform: rotateY(0deg)  scale(1);   }
+/* ── Motion: calm card entrance (no casino flip) ───────────────────────────── */
+.card-enter { animation: card-in var(--dur-slow) var(--ease-out) both; }
+@keyframes card-in {
+  from { opacity: 0; transform: translateY(3px) scale(0.985); }
+  to   { opacity: 1; transform: translateY(0)   scale(1);     }
 }
 
-/* Range slider polish */
+/* ── Range slider ──────────────────────────────────────────────────────────── */
 input[type="range"] {
-  appearance: none; height: 4px;
-  background: rgba(255,255,255,0.15); border-radius: 2px; outline: none;
+  appearance: none; -webkit-appearance: none;
+  height: 4px; padding: 0;
+  background: var(--bg-inset);
+  border: none;
+  border-radius: var(--radius-pill);
+  outline: none;
 }
+input[type="range"]:focus { box-shadow: none; }
 input[type="range"]::-webkit-slider-thumb {
-  appearance: none; width: 16px; height: 16px; border-radius: 50%;
-  background: var(--color-gold); cursor: pointer;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  -webkit-appearance: none; appearance: none;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent-400); cursor: pointer;
+  border: 2px solid var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.12); }
 input[type="range"]::-moz-range-thumb {
-  width: 16px; height: 16px; border-radius: 50%; border: none;
-  background: var(--color-gold); cursor: pointer;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--accent-400); cursor: pointer;
+  border: 2px solid var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Reduced-motion respect */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }

@@ -1,5 +1,12 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
+import {
+  Dismiss20Regular,
+  Checkmark20Regular,
+  Money20Regular,
+  ArrowUp20Filled,
+  Flash20Filled,
+} from '@fluentui/react-icons';
 import type { LegalAction, Action, PlayerId } from '@poker/engine';
 
 interface Props {
@@ -46,23 +53,23 @@ export function BetSizingControls({ legal, pot, playerId, onAction }: Props) {
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
         {fold && (
           <button className="btn-fold" onClick={() => dispatch({ ...makeBase(), type: 'FOLD' })}>
-            Fold
+            <Dismiss20Regular /> Fold
           </button>
         )}
         {check && (
           <button className="btn-check" onClick={() => dispatch({ ...makeBase(), type: 'CHECK' })}>
-            Check
+            <Checkmark20Regular /> Check
           </button>
         )}
         {call && (
           <button className="btn-call" onClick={() => dispatch({ ...makeBase(), type: 'CALL', amount: call.amount })}>
-            Call {call.amount}
+            <Money20Regular /> Call <span className="tnum">{call.amount}</span>
           </button>
         )}
         {/* All-in when no raise option available */}
         {allIn && !betRaise && (
           <button className="btn-allin" onClick={() => dispatch({ ...makeBase(), type: 'ALL_IN', amount: allIn.amount })}>
-            All In ({allIn.amount})
+            <Flash20Filled /> All In (<span className="tnum">{allIn.amount}</span>)
           </button>
         )}
         {betRaise && (
@@ -74,7 +81,7 @@ export function BetSizingControls({ legal, pot, playerId, onAction }: Props) {
               amount: currentAmount,
             } as Action)}
           >
-            {betRaise.type === 'RAISE' ? 'Raise' : 'Bet'} to {currentAmount}
+            <ArrowUp20Filled /> {betRaise.type === 'RAISE' ? 'Raise' : 'Bet'} to <span className="tnum">{currentAmount}</span>
           </button>
         )}
       </div>
@@ -93,11 +100,12 @@ export function BetSizingControls({ legal, pot, playerId, onAction }: Props) {
                   disabled={disabled}
                   onClick={() => setAmount(v)}
                   style={{
-                    padding: '4px 10px', fontSize: '0.78rem', borderRadius: 6,
-                    background: currentAmount === v ? 'rgba(212,168,67,0.3)' : 'rgba(255,255,255,0.07)',
-                    border: currentAmount === v ? '1px solid var(--color-gold)' : '1px solid rgba(255,255,255,0.15)',
-                    color: disabled ? '#555' : 'var(--color-text)',
+                    padding: '4px 12px', fontSize: 'var(--text-sm)', borderRadius: 'var(--radius-pill)',
+                    background: currentAmount === v ? 'var(--accent-soft)' : 'var(--bg-raised)',
+                    border: currentAmount === v ? '1px solid var(--accent)' : '1px solid var(--border)',
+                    color: disabled ? 'var(--text-faint)' : currentAmount === v ? 'var(--accent-strong)' : 'var(--text-secondary)',
                     cursor: disabled ? 'not-allowed' : 'pointer',
+                    fontWeight: 600,
                   }}
                 >
                   {label}
@@ -108,11 +116,12 @@ export function BetSizingControls({ legal, pot, playerId, onAction }: Props) {
               <button
                 onClick={() => dispatch({ ...makeBase(), type: 'ALL_IN', amount: allIn.amount })}
                 style={{
-                  padding: '4px 10px', fontSize: '0.78rem', borderRadius: 6,
-                  background: 'rgba(142,68,173,0.2)',
-                  border: '1px solid rgba(142,68,173,0.5)',
-                  color: 'var(--color-allin)', cursor: 'pointer',
+                  padding: '4px 12px', fontSize: 'var(--text-sm)', borderRadius: 'var(--radius-pill)',
+                  background: 'var(--violet-soft)',
+                  border: '1px solid rgba(138,123,192,0.42)',
+                  color: 'var(--allin)', cursor: 'pointer', fontWeight: 600,
                 }}
+                className="tnum"
               >
                 All In ({allIn.amount})
               </button>

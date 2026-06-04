@@ -1,3 +1,4 @@
+import { Trophy24Filled, ArrowDownload20Regular } from '@fluentui/react-icons';
 import type { MatchState, PlayerId } from '@poker/engine';
 import { computeAllStats, handsForMatch } from '@poker/engine';
 import { useMatchStore } from '../../store/matchStore.js';
@@ -32,29 +33,28 @@ export function MatchResults({ match, heroId }: Props) {
 
   return (
     <div style={{ maxWidth: 480, margin: '32px auto', padding: '0 16px' }}>
-      <div className="panel" style={{ textAlign: 'center', marginBottom: 16 }}>
-        <div style={{ fontSize: '0.8rem', color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: 1 }}>
-          Match complete
-        </div>
-        <h1 style={{ color: 'var(--color-gold)', margin: '8px 0' }}>
-          {heroWon ? '🏆 You win!' : `${nameOf(match.winnerId ?? '')} wins`}
+      <div className="panel" style={{ textAlign: 'center', marginBottom: 'var(--space-4)' }}>
+        <div className="eyebrow">Match complete</div>
+        <h1 style={{ margin: '10px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 'var(--space-2)' }}>
+          {heroWon && <Trophy24Filled style={{ color: 'var(--caution)' }} />}
+          {heroWon ? 'You win!' : `${nameOf(match.winnerId ?? '')} wins`}
         </h1>
-        <div style={{ fontSize: '0.85rem', color: 'var(--color-text-dim)' }}>
+        <div className="tnum" style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>
           {match.handNumber} hand{match.handNumber !== 1 ? 's' : ''} played
         </div>
       </div>
 
-      <div className="panel" style={{ marginBottom: 16 }}>
-        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 10 }}>
+      <div className="panel" style={{ marginBottom: 'var(--space-4)' }}>
+        <div className="eyebrow" style={{ marginBottom: 'var(--space-3)' }}>
           Final standings
         </div>
         {standings.map((id, i) => (
-          <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 0', fontSize: '0.9rem' }}>
-            <span style={{ width: 24, color: 'var(--color-text-dim)', fontFamily: 'var(--font-mono)' }}>{i + 1}</span>
-            <span style={{ fontWeight: id === heroId ? 700 : 400, color: id === heroId ? 'var(--color-gold)' : 'var(--color-text)' }}>
+          <div key={id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '4px 0', fontSize: 'var(--text-base)' }}>
+            <span className="tnum" style={{ width: 24, color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{i + 1}</span>
+            <span style={{ fontWeight: id === heroId ? 600 : 400, color: id === heroId ? 'var(--accent-strong)' : 'var(--text-primary)' }}>
               {nameOf(id)}
             </span>
-            {i === 0 && <span style={{ marginLeft: 'auto', fontSize: '0.75rem', color: 'var(--color-call)' }}>winner</span>}
+            {i === 0 && <span style={{ marginLeft: 'auto', fontSize: 'var(--text-xs)', color: 'var(--success)' }}>winner</span>}
           </div>
         ))}
       </div>
@@ -65,15 +65,15 @@ export function MatchResults({ match, heroId }: Props) {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div style={{ display: 'flex', gap: 'var(--space-2)' }}>
         <button
           className="btn-ghost"
-          style={{ flex: 1, padding: 12 }}
+          style={{ flex: 1, padding: 'var(--space-3)' }}
           onClick={() => { void exportMatchToFile(match, allHands, heroId); }}
         >
-          ⬇ Export JSON
+          <ArrowDownload20Regular /> Export JSON
         </button>
-        <button className="btn-call" style={{ flex: 1, padding: 12 }} onClick={newMatch}>
+        <button className="btn-primary" style={{ flex: 1, padding: 'var(--space-3)' }} onClick={newMatch}>
           New Match
         </button>
       </div>

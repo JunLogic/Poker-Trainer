@@ -1,3 +1,4 @@
+import { DataTrending20Regular } from '@fluentui/react-icons';
 import {
   aggregateStrategyWeaknesses,
   summarizeStrategyPerformance,
@@ -24,23 +25,16 @@ export function StrategyWeaknessDashboard({ verdicts, compact = false }: Props) 
   return (
     <div className={compact ? undefined : 'panel'} style={{
       marginTop: compact ? 8 : 12,
-      padding: compact ? '10px 12px' : undefined,
-      background: compact ? 'rgba(255,255,255,0.04)' : undefined,
-      border: compact ? '1px solid rgba(255,255,255,0.1)' : undefined,
-      borderRadius: compact ? 8 : undefined,
+      padding: compact ? 'var(--space-3)' : undefined,
+      background: compact ? 'var(--bg-raised)' : undefined,
+      border: compact ? '1px solid var(--border-subtle)' : undefined,
+      borderRadius: compact ? 'var(--radius-md)' : undefined,
     }}>
-      <div style={{
-        fontSize: '0.78rem',
-        color: 'var(--color-text-dim)',
-        textTransform: 'uppercase',
-        letterSpacing: 0.8,
-        fontWeight: 700,
-        marginBottom: 8,
-      }}>
-        Strategy Dashboard
+      <div className="eyebrow" style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 'var(--space-2)' }}>
+        <DataTrending20Regular style={{ fontSize: 16 }} /> Strategy Dashboard
       </div>
 
-      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10, fontSize: '0.76rem' }}>
+      <div className="tnum" style={{ display: 'flex', gap: 'var(--space-2)', flexWrap: 'wrap', marginBottom: 'var(--space-3)', fontSize: 'var(--text-sm)' }}>
         <Metric label="Accuracy" value={summary.overallAccuracy === null ? '--' : `${Math.round(summary.overallAccuracy * 100)}%`} />
         <Metric label="Covered" value={String(summary.coveredCount)} />
         <Metric label="Uncovered" value={String(summary.uncoveredCount)} />
@@ -67,14 +61,14 @@ export function StrategyWeaknessDashboard({ verdicts, compact = false }: Props) 
       )}
 
       {weaknesses.length > 0 && (
-        <div style={{ display: 'grid', gap: 7 }}>
+        <div style={{ display: 'grid', gap: 'var(--space-2)' }}>
           {weaknesses.map(entry => (
-            <div key={entry.tag} style={{ fontSize: '0.78rem', lineHeight: 1.35 }}>
-              <div style={{ display: 'flex', gap: 8, alignItems: 'baseline' }}>
-                <span style={{ color: 'var(--color-text)', fontWeight: 700 }}>{entry.label}</span>
-                <span style={{ color: 'var(--color-gold)', fontFamily: 'var(--font-mono)' }}>{entry.count}</span>
+            <div key={entry.tag} style={{ fontSize: 'var(--text-sm)', lineHeight: 1.4 }}>
+              <div style={{ display: 'flex', gap: 'var(--space-2)', alignItems: 'baseline' }}>
+                <span style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{entry.label}</span>
+                <span className="tnum" style={{ color: 'var(--caution)', fontFamily: 'var(--font-mono)' }}>{entry.count}</span>
               </div>
-              <div style={{ color: 'var(--color-text-dim)' }}>{entry.suggestedFocus}</div>
+              <div style={{ color: 'var(--text-muted)' }}>{entry.suggestedFocus}</div>
             </div>
           ))}
         </div>
@@ -89,25 +83,25 @@ function Metric({ label, value }: { label: string; value: string }) {
       display: 'inline-flex',
       alignItems: 'center',
       gap: 5,
-      border: '1px solid rgba(255,255,255,0.14)',
-      borderRadius: 6,
-      padding: '3px 7px',
-      background: 'rgba(255,255,255,0.05)',
+      border: '1px solid var(--border)',
+      borderRadius: 'var(--radius-sm)',
+      padding: '3px 8px',
+      background: 'var(--bg-surface)',
     }}>
-      <span style={{ color: 'var(--color-text-dim)' }}>{label}</span>
-      <span style={{ color: 'var(--color-text)', fontFamily: 'var(--font-mono)' }}>{value}</span>
+      <span style={{ color: 'var(--text-muted)' }}>{label}</span>
+      <span style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{value}</span>
     </span>
   );
 }
 
 function pillStyle() {
   return {
-    border: '1px solid rgba(212,168,67,0.28)',
-    borderRadius: 6,
-    padding: '2px 7px',
-    color: 'var(--color-text-dim)',
-    background: 'rgba(212,168,67,0.06)',
-    fontSize: '0.72rem',
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--radius-pill)',
+    padding: '2px 9px',
+    color: 'var(--text-secondary)',
+    background: 'var(--accent-softer)',
+    fontSize: 'var(--text-xs)',
     textTransform: 'capitalize' as const,
   };
 }

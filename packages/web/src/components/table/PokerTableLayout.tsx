@@ -74,10 +74,10 @@ export function PokerTableLayout({ state, heroId, equities, isComputingEquity, s
 
         {/* Community cards + pot */}
         <div style={{
-          background: 'linear-gradient(180deg, rgba(26,71,42,0.6) 0%, rgba(15,45,26,0.6) 100%)',
-          borderTop: '1px solid rgba(255,255,255,0.08)',
-          borderBottom: '1px solid rgba(255,255,255,0.08)',
-          padding: '12px 16px', textAlign: 'center',
+          background: 'linear-gradient(180deg, var(--table-surface-from) 0%, var(--table-surface-to) 100%)',
+          borderTop: '1px solid var(--border-subtle)',
+          borderBottom: '1px solid var(--border-subtle)',
+          padding: '16px', textAlign: 'center',
         }}>
           <BoardCenter boardCards={boardCards} totalPot={totalPot} streetLabel={streetLabel} state={state} />
         </div>
@@ -99,20 +99,20 @@ export function PokerTableLayout({ state, heroId, equities, isComputingEquity, s
         {/* Outer container for the oval + surrounding seats */}
         <div style={{ position: 'relative', height: 390, maxWidth: 700, margin: '0 auto' }}>
 
-          {/* Oval felt table */}
+          {/* Matte oval table surface (no felt, no gloss) */}
           <div style={{
             position: 'absolute',
             top: 68, left: '8%', right: '8%', bottom: 60,
             borderRadius: '50%',
-            background: 'radial-gradient(ellipse at 50% 40%, #2d6a42 0%, #1a472a 75%, #163d22 100%)',
-            border: '8px solid #6b4c14',
-            boxShadow: 'inset 0 4px 24px rgba(0,0,0,0.4), inset 0 -4px 12px rgba(0,0,0,0.25), 0 10px 32px rgba(0,0,0,0.6)',
+            background: 'linear-gradient(180deg, var(--table-surface-from) 0%, var(--table-surface-to) 100%)',
+            border: '1px solid var(--table-rail)',
+            boxShadow: 'var(--shadow-lg)',
             overflow: 'hidden',
           }}>
-            {/* Subtle rail highlight */}
+            {/* Hairline inner ring — defines the rail without a bevel/glow */}
             <div style={{
-              position: 'absolute', inset: 0, borderRadius: '50%',
-              background: 'radial-gradient(ellipse at 50% 15%, rgba(255,255,255,0.06) 0%, transparent 55%)',
+              position: 'absolute', inset: 10, borderRadius: '50%',
+              border: '1px solid var(--border-subtle)',
               pointerEvents: 'none',
             }} />
 
@@ -182,12 +182,10 @@ function BoardCenter({
 }) {
   return (
     <>
-      <div style={{ fontSize: '0.68rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: 1.5 }}>
-        {streetLabel}
-      </div>
-      <div style={{ display: 'flex', gap: 6, alignItems: 'center', minHeight: 52 }}>
+      <div className="eyebrow">{streetLabel}</div>
+      <div style={{ display: 'flex', gap: 6, alignItems: 'center', minHeight: 56 }}>
         {boardCards.length === 0 && (
-          <span style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.2)' }}>waiting for flop…</span>
+          <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-faint)' }}>waiting for flop…</span>
         )}
         {(boardCards as import('@poker/engine').Card[]).map((card, i) => (
           <PlayingCard key={i} card={card} size="sm" />
@@ -195,12 +193,12 @@ function BoardCenter({
       </div>
       {totalPot > 0 && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: 1 }}>Pot</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--color-gold)', fontSize: '0.95rem' }}>
+          <span className="eyebrow">Pot</span>
+          <span className="chip-count" style={{ color: 'var(--text-primary)', fontSize: 'var(--text-md)' }}>
             <ChipDisplay amount={totalPot} />
           </span>
           {state.sidePots.length > 1 && (
-            <span style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.35)' }}>
+            <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)' }}>
               ({state.sidePots.length} pots)
             </span>
           )}
@@ -213,20 +211,20 @@ function BoardCenter({
 function EquityStrip({ heroEquity, isComputing }: { heroEquity: number; isComputing: boolean }) {
   if (heroEquity === 0 && !isComputing) return null;
   return (
-    <div style={{ maxWidth: 700, margin: '0 auto', padding: '5px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-      <span style={{ fontSize: '0.7rem', color: 'var(--color-text-dim)', whiteSpace: 'nowrap' }}>Your equity</span>
-      <div style={{ flex: 1, height: 5, borderRadius: 3, background: 'rgba(255,255,255,0.08)', overflow: 'hidden' }}>
+    <div style={{ maxWidth: 700, margin: '0 auto', padding: '6px 16px', display: 'flex', alignItems: 'center', gap: 'var(--space-2)' }}>
+      <span style={{ fontSize: 'var(--text-xs)', color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Your equity</span>
+      <div style={{ flex: 1, height: 6, borderRadius: 'var(--radius-pill)', background: 'var(--bg-inset)', overflow: 'hidden' }}>
         <div style={{
           height: '100%',
           width: `${heroEquity * 100}%`,
-          background: heroEquity > 0.5 ? 'var(--color-call)' : heroEquity > 0.3 ? '#e0a020' : 'var(--color-fold)',
-          transition: 'width 0.5s ease, background 0.5s ease',
-          borderRadius: 3,
+          background: heroEquity > 0.5 ? 'var(--success)' : heroEquity > 0.3 ? 'var(--caution)' : 'var(--danger)',
+          transition: 'width var(--dur-slow) var(--ease-out), background var(--dur-slow) var(--ease-out)',
+          borderRadius: 'var(--radius-pill)',
         }} />
       </div>
-      <span style={{
-        fontSize: '0.78rem', fontFamily: 'var(--font-mono)', fontWeight: 700, minWidth: 38, textAlign: 'right',
-        color: isComputing ? 'var(--color-text-dim)' : 'var(--color-gold)',
+      <span className="tnum" style={{
+        fontSize: 'var(--text-sm)', fontFamily: 'var(--font-mono)', fontWeight: 600, minWidth: 38, textAlign: 'right',
+        color: isComputing ? 'var(--text-muted)' : 'var(--text-primary)',
       }}>
         {isComputing ? '…' : `${(heroEquity * 100).toFixed(0)}%`}
       </span>

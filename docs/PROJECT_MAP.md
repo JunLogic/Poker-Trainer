@@ -349,10 +349,65 @@ Known uncovered examples:
 | `components/common/CardPicker.tsx` | 52-card picker (umpire showdown) |
 | `components/common/PlayerSeat.tsx` | Umpire seat row |
 | `components/common/ChipDisplay.tsx` | Chip formatting |
-| `styles/tokens.css`, `styles/global.css` | Design tokens + base styles |
+| `components/cards/suits.ts` | Suit glyphs + `suitInk()` color token (2-color / 4-color deck) |
+| `styles/tokens.css` | **Design-token source of truth** (CSS custom properties) |
+| `styles/global.css` | Base/reset, button system, inputs, panel, utilities (`.tnum`, `.eyebrow`) |
+| `styles/theme.ts` | Typed `var(--token)` accessors for inline styles (color/radius/shadow/space/font/iconSize/motion) |
 | `scripts/gen-icons.mjs` (repo root `scripts/`) | Dependency-free PWA icon generator |
 
 ---
+
+## Design system (presentational layer)
+
+Matte, calm, modern — "poker as a serious analytical activity," not a casino. **No green
+felt, no leather, no neon, no glossy chrome.** Surfaces are distinguished by subtle
+background steps + hairline borders first, soft diffuse shadows second.
+
+**Styling approach.** No CSS framework. Styling is (1) a single design-token layer in
+`styles/tokens.css`, (2) base/utility classes in `styles/global.css`, (3) component-level
+inline `style={{}}` that consume `var(--token)` references (optionally via the typed
+`styles/theme.ts` helper). There are **no scattered hardcoded hex/shadow values** in the
+refactored components.
+
+**Tokens (`styles/tokens.css`)** — the single source of truth. Layers:
+- *Primitives:* cool-gray neutral ramp (`--gray-50…--gray-950`, ~13 steps), one restrained
+  desaturated-indigo accent ramp (`--accent-300…--accent-700`), low-saturation semantic
+  colors (`--green/red/blue/amber/violet-500` + `*-soft` tints), playing-card inks.
+- *Semantic aliases (theme-mapped):* surfaces (`--bg-app/surface/raised/elevated/hover/
+  input/inset`), table surface (`--table-surface-from/to`, `--table-rail`), borders
+  (`--border-subtle/border/strong`), text (`--text-primary/secondary/muted/faint`), state
+  (`--accent`, `--success`, `--danger`, `--info`, `--caution`, `--allin`), elevation
+  (`--shadow-sm/md/lg/pop/card` — low opacity, large blur, no bevel/inner-glow), radius
+  (`--radius-xs…xl/pill`), spacing (`--space-1…8`, 8pt-based), type scale
+  (`--text-xs…2xl`, weights, `--font-sans` Inter-or-system / `--font-mono`), icon sizes
+  (`--icon-sm/md/lg`), motion (`--ease-out`, `--dur-fast/dur/dur-slow`).
+- *Legacy aliases:* the old `--color-*` / `--suit-*` / `--spacing-*` names are re-pointed at
+  the new matte palette, so any not-yet-refactored code still renders matte.
+- **Theme:** default is **matte dark** (Offsuit-spirit, matches PWA `theme_color`). A light
+  theme mirrors every semantic token via `:root[data-theme="light"]` and
+  `@media (prefers-color-scheme: light)`. Nothing toggles it yet — extension point.
+
+**Tabular figures.** Every element rendering numbers (stacks, pot, bets, equity %, scores,
+counts) carries `.tnum` / `font-variant-numeric: tabular-nums` so digits don't jitter.
+
+**Iconography.** `@fluentui/react-icons` (Microsoft Teams style). **Regular (outline)** weight
+for idle/default, **Filled** for active/selected/emphasis (e.g. nav tabs swap
+`Gavel20Regular`↔`Gavel20Filled`). Sizes follow the icon tokens (16/20/24). Wired into:
+App nav + home cards, action buttons (`ActionButtons`, `BetSizingControls`), Practice turn
+indicator, strategy panels (Lightbulb / CheckmarkCircle / DismissCircle / DataTrending),
+MatchSetup/Results (Target / Play / Trophy / Download), Umpire setup/showdown (Gavel / Play),
+History list + replay transport controls. All prior emoji/glyph icons removed.
+
+**Playing cards (`components/cards/PlayingCard.tsx`).** Crisp matte vector card: clean
+rank+suit typography, hairline border, soft corner radius, soft card shadow (no gloss
+gradient). Face-down = accent-tinted hatch. Public API is unchanged
+(`card`, `faceDown`, `size`); two **additive optional** props were added — `fourColor`
+(4-color deck: clubs green, diamonds blue) and `highlight` (winning/selected ring). Suit
+colors come from `suitInk()` in `components/cards/suits.ts`.
+
+**Deferred (later pass):** orphaned components `history/HandSummaryView.tsx` and
+`practice/CoachPanel.tsx` were left untouched (they are unused; they still inherit the matte
+palette through the legacy token aliases). No light-theme toggle UI yet.
 
 ## Run locally / Test / Build & deploy
 
