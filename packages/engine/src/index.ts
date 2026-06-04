@@ -44,3 +44,37 @@ export type {
 
 export { computePlayerStats, computeAllStats, handsForMatch } from './stats.js';
 export type { PlayerStats } from './stats.js';
+
+export type {
+  StrategyProfileId,
+  DifficultyLevel,
+  StrategyStreet,
+  StrategyActionType,
+  StrategyConfidence,
+  WeaknessTag,
+  TablePosition,
+  StrategyViolation,
+  StrategyDecisionContext,
+  StrategyAdviceContext,
+  StrategyAdvice,
+  StrategyVerdict,
+  StrategyProfile,
+  StrategyWeaknessDashboardEntry,
+  StrategyPerformanceSummary,
+} from './strategy/index.js';
+export {
+  buildStrategyDecisionContext,
+  buildStrategyAdviceContext,
+  derivePositionsByPlayerId,
+  inferPreflopAggressor,
+  DEFAULT_STRATEGY_PROFILE_ID,
+  registerStrategyProfile,
+  getStrategyProfile,
+  getDefaultStrategyProfile,
+  listStrategyProfiles,
+  gtoV1StrategyProfile,
+  classifyBoardTexture,
+  isHandInGtoV1OpeningRange,
+  aggregateStrategyWeaknesses,
+  summarizeStrategyPerformance,
+} from './strategy/index.js';

@@ -1,7 +1,10 @@
+import type { StrategyVerdict } from '@poker/engine';
+
 /**
  * Parallel annotation layer — completely outside the engine's action types.
  * Keyed by Action.id so it can be looked up during replay without modifying
- * the action log. This is also the shape the future coach stub will consume.
+ * the action log. Thoughts and strategy verdicts are siblings on the same
+ * hand-level annotation object so persisted hand history stays replayable.
  */
 export interface ThoughtEntry {
   readonly actionId: string;       // matches the Action.id in the engine log
@@ -19,4 +22,6 @@ export interface HandAnnotations {
   readonly handId: string;
   /** Record keyed by Action.id */
   readonly thoughts: Record<string, ThoughtEntry>;
+  /** Record keyed by Action.id; optional for backward compatibility with v2 saved hands */
+  readonly strategyVerdicts?: Record<string, StrategyVerdict>;
 }

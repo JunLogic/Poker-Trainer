@@ -1,15 +1,29 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { nanoid } from 'nanoid';
-import { whoseTurn, legalActions, evaluateHand, compareHandRanks, makeBot } from '@poker/engine';
+import {
+  whoseTurn,
+  legalActions,
+  evaluateHand,
+  compareHandRanks,
+  makeBot,
+  buildStrategyAdviceContext,
+  buildStrategyDecisionContext,
+  getDefaultStrategyProfile,
+  getStrategyProfile,
+} from '@poker/engine';
 import type { GameState, Action, LegalAction, PlayerId, HeuristicBot } from '@poker/engine';
 import { PokerTableLayout } from '../table/PokerTableLayout.js';
 import { BetSizingControls } from './BetSizingControls.js';
 import { ThoughtInput } from './ThoughtInput.js';
+import { StrategyAdvicePanel } from '../strategy/StrategyAdvicePanel.js';
+import { StrategyFeedbackPanel } from '../strategy/StrategyFeedbackPanel.js';
+import { StrategyWeaknessDashboard } from '../strategy/StrategyWeaknessDashboard.js';
 import { useEquity } from '../../hooks/useEquity.js';
 import { estimateOwnEquity } from '../../hooks/equityClient.js';
 import { useGameStore } from '../../store/gameStore.js';
 import { usePracticeStore } from '../../store/practiceStore.js';
 import { useThoughtsStore } from '../../store/thoughtsStore.js';
+import { useSettingsStore } from '../../store/settingsStore.js';
 import type { HandAnnotations } from '../../types/thoughts.js';
 
 const BOT_THINK_MS = 700;
@@ -32,7 +46,14 @@ export function PracticeTable({
 }: Props) {
   const appendAction = useGameStore(s => s.appendAction);
   const boardCards = usePracticeStore(s => s.boardCards);
-  const { addThought, snapshot } = useThoughtsStore();
+  const addThought = useThoughtsStore(s => s.addThought);
+  const addStrategyVerdict = useThoughtsStore(s => s.addStrategyVerdict);
+  const strategyVerdicts = useThoughtsStore(s => s.strategyVerdicts);
+  const latestStrategyVerdictId = useThoughtsStore(s => s.latestStrategyVerdictId);
+  const snapshot = useThoughtsStore(s => s.snapshot);
+  const strategyProfileId = useSettingsStore(s => s.strategyProfileId);
+  const strategyDifficulty = useSettingsStore(s => s.strategyDifficulty);
+  const showStrategyAdvice = useSettingsStore(s => s.showStrategyAdvice);
 
   const [autoPlay, setAutoPlay] = useState(true);
   const [thoughtText, setThoughtText] = useState('');
@@ -53,6 +74,10 @@ export function PracticeTable({
   const currentId = whoseTurn(state);
   const isHeroTurn = currentId === heroId;
   const legal = legalActions(state);
+  const strategyProfile = useMemo(
+    () => getStrategyProfile(strategyProfileId) ?? getDefaultStrategyProfile(),
+    [strategyProfileId],
+  );
 
   const boardCardsList = [
     ...(state.board.flop ?? []),
@@ -70,9 +95,33 @@ export function PracticeTable({
   const currentBet = state.bettingRound.currentBet;
   const hero = state.players.find(p => p.id === heroId);
   const betToCall = hero ? Math.max(0, currentBet - hero.betThisStreet) : 0;
+  const latestStrategyVerdict = latestStrategyVerdictId
+    ? (strategyVerdicts[latestStrategyVerdictId] ?? null)
+    : null;
+  const strategyVerdictList = useMemo(
+    () => Object.values(strategyVerdicts),
+    [strategyVerdicts],
+  );
+  const preActionAdvice = useMemo(() => {
+    if (!showStrategyAdvice || !isHeroTurn || state.isHandOver) return null;
+    const context = buildStrategyAdviceContext(state, {
+      heroId,
+      profileId: strategyProfile.id,
+      difficulty: strategyDifficulty,
+    });
+    return context ? (strategyProfile.getPreActionAdvice?.(context) ?? null) : null;
+  }, [showStrategyAdvice, isHeroTurn, state, heroId, strategyProfile, strategyDifficulty]);
 
   // ── Hero action (captures thought) ─────────────────────────────────────────
   const handleHeroAction = useCallback((action: Action) => {
+    const decisionContext = buildStrategyDecisionContext(state, action, {
+      heroId,
+      profileId: strategyProfile.id,
+      difficulty: strategyDifficulty,
+    });
+    if (decisionContext) {
+      addStrategyVerdict(action.id, strategyProfile.evaluateDecision(decisionContext));
+    }
     addThought({
       actionId: action.id,
       actionIndex: state.actionLog.length,
@@ -86,7 +135,19 @@ export function PracticeTable({
     });
     appendAction(action);
     setThoughtText('');
-  }, [thoughtText, heroEquity, state.street, state.actionLog.length, totalPot, betToCall, addThought, appendAction]);
+  }, [
+    state,
+    heroId,
+    strategyProfile,
+    strategyDifficulty,
+    addStrategyVerdict,
+    thoughtText,
+    heroEquity,
+    totalPot,
+    betToCall,
+    addThought,
+    appendAction,
+  ]);
 
   // ── Bot auto-play (sequenced; each bot estimates its OWN equity) ───────────
   useEffect(() => {
@@ -226,6 +287,7 @@ export function PracticeTable({
 
         {isHeroTurn && legal.length > 0 && (
           <>
+            <StrategyAdvicePanel advice={preActionAdvice} />
             <ThoughtInput
               equity={heroEquity}
               pot={totalPot}
@@ -241,6 +303,9 @@ export function PracticeTable({
             />
           </>
         )}
+
+        <StrategyFeedbackPanel verdict={latestStrategyVerdict} />
+        <StrategyWeaknessDashboard verdicts={strategyVerdictList} />
       </div>
     </div>
   );

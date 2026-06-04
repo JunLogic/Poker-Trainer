@@ -6,6 +6,7 @@ import { PlayingCard } from '../cards/PlayingCard.js';
 import { ChipDisplay } from '../common/ChipDisplay.js';
 import { openHandDb, getAnnotations } from '../../db/handDb.js';
 import type { HandAnnotations, ThoughtEntry } from '../../types/thoughts.js';
+import { StrategyFeedbackPanel } from '../strategy/StrategyFeedbackPanel.js';
 
 interface Props {
   record: HandRecord;
@@ -38,6 +39,10 @@ export function HandReplayViewer({ record, onBack }: Props) {
     currentAction && annotations
       ? (annotations.thoughts[currentAction.id] ?? null)
       : null;
+  const currentStrategyVerdict =
+    currentAction && annotations
+      ? (annotations.strategyVerdicts?.[currentAction.id] ?? null)
+      : null;
 
   const totalPot = state.sidePots.reduce((s, p) => s + p.amount, 0);
   const boardCards = [
@@ -56,7 +61,7 @@ export function HandReplayViewer({ record, onBack }: Props) {
         <h2 style={{ color: 'var(--color-gold)' }}>Replay</h2>
         {annotations && (
           <span style={{ fontSize: '0.75rem', color: 'var(--color-text-dim)', marginLeft: 4 }}>
-            {Object.keys(annotations.thoughts).length} thought{Object.keys(annotations.thoughts).length !== 1 ? 's' : ''} logged
+            {Object.keys(annotations.thoughts).length} thought{Object.keys(annotations.thoughts).length !== 1 ? 's' : ''} · {Object.keys(annotations.strategyVerdicts ?? {}).length} verdict{Object.keys(annotations.strategyVerdicts ?? {}).length !== 1 ? 's' : ''}
           </span>
         )}
       </div>
@@ -106,6 +111,10 @@ export function HandReplayViewer({ record, onBack }: Props) {
             </div>
           )}
         </div>
+      )}
+
+      {currentStrategyVerdict && (
+        <StrategyFeedbackPanel verdict={currentStrategyVerdict} compact />
       )}
 
       {/* Players */}

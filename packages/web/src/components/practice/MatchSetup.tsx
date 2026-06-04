@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { nanoid } from 'nanoid';
-import { BOT_PROFILES, DEFAULT_PROFILE_KEYS } from '@poker/engine';
+import { BOT_PROFILES, DEFAULT_PROFILE_KEYS, listStrategyProfiles } from '@poker/engine';
+import type { DifficultyLevel } from '@poker/engine';
 import type { MatchConfig } from '@poker/engine';
 import { useSettingsStore } from '../../store/settingsStore.js';
 
@@ -9,9 +10,23 @@ interface Props {
 }
 
 const PROFILE_KEYS = Object.keys(BOT_PROFILES);
+const STRATEGY_PROFILES = listStrategyProfiles();
+const DIFFICULTIES: readonly DifficultyLevel[] = ['beginner', 'intermediate', 'advanced'];
 
 export function MatchSetup({ onStart }: Props) {
-  const { smallBlind, bigBlind, setBlinds, showOdds, setShowOdds } = useSettingsStore();
+  const {
+    smallBlind,
+    bigBlind,
+    setBlinds,
+    showOdds,
+    setShowOdds,
+    showStrategyAdvice,
+    setShowStrategyAdvice,
+    strategyProfileId,
+    setStrategyProfileId,
+    strategyDifficulty,
+    setStrategyDifficulty,
+  } = useSettingsStore();
   const [numBots, setNumBots] = useState(1);
   const [stack, setStack] = useState(1000);
   // profile per bot index; default to a sensible rotating mix
@@ -98,6 +113,40 @@ export function MatchSetup({ onStart }: Props) {
         <input type="checkbox" checked={showOdds} onChange={e => setShowOdds(e.target.checked)} />
         Show my equity (odds) during play
       </label>
+
+      <div style={{
+        border: '1px solid rgba(255,255,255,0.1)',
+        borderRadius: 8,
+        padding: 10,
+        marginBottom: 16,
+        background: 'rgba(255,255,255,0.03)',
+      }}>
+        <div style={{ fontSize: '0.78rem', color: 'var(--color-text-dim)', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 8 }}>
+          Strategy Trainer
+        </div>
+        <div style={{ display: 'grid', gap: 8 }}>
+          <label style={{ display: 'grid', gap: 4, fontSize: '0.85rem' }}>
+            Profile
+            <select value={strategyProfileId} onChange={e => setStrategyProfileId(e.target.value)}>
+              {STRATEGY_PROFILES.map(profile => (
+                <option key={profile.id} value={profile.id}>{profile.name}</option>
+              ))}
+            </select>
+          </label>
+          <label style={{ display: 'grid', gap: 4, fontSize: '0.85rem' }}>
+            Difficulty
+            <select value={strategyDifficulty} onChange={e => setStrategyDifficulty(e.target.value as DifficultyLevel)}>
+              {DIFFICULTIES.map(level => (
+                <option key={level} value={level}>{level[0]!.toUpperCase() + level.slice(1)}</option>
+              ))}
+            </select>
+          </label>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.85rem', cursor: 'pointer' }}>
+            <input type="checkbox" checked={showStrategyAdvice} onChange={e => setShowStrategyAdvice(e.target.checked)} />
+            Show advice before acting
+          </label>
+        </div>
+      </div>
 
       <button className="btn-call" style={{ width: '100%', padding: 12 }} onClick={handleStart}>
         Start Match

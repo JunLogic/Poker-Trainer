@@ -1,6 +1,7 @@
 import type { HandRecord, PlayerId } from '@poker/engine';
 import { replayLog } from '../../store/gameStore.js';
 import type { HandAnnotations } from '../../types/thoughts.js';
+import { StrategyWeaknessDashboard } from '../strategy/StrategyWeaknessDashboard.js';
 
 interface Props {
   record: HandRecord;
@@ -31,10 +32,12 @@ export function MatchInterstitial({
       street: before.street,
       pot: before.sidePots.reduce((s, p) => s + p.amount, 0),
       thought: annotations.thoughts[a.id] ?? null,
+      verdict: annotations.strategyVerdicts?.[a.id] ?? null,
     });
   }
 
   const ids = record.config.players.map(p => p.id);
+  const strategyVerdicts = Object.values(annotations.strategyVerdicts ?? {});
 
   return (
     <div style={{
@@ -85,7 +88,7 @@ export function MatchInterstitial({
               Your decisions
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-              {decisions.map(({ action, street, pot, thought }) => (
+              {decisions.map(({ action, street, pot, thought, verdict }) => (
                 <div key={action.id} style={{ background: 'rgba(255,255,255,0.04)', borderRadius: 8, padding: '6px 10px', fontSize: '0.8rem' }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <span style={{ color: 'var(--color-text-dim)', textTransform: 'capitalize' }}>{street}</span>
@@ -99,11 +102,18 @@ export function MatchInterstitial({
                       "{thought.thought}"
                     </div>
                   )}
+                  {verdict && (
+                    <div style={{ marginTop: 5, color: verdict.covered ? 'var(--color-text)' : 'var(--color-text-dim)' }}>
+                      Strategy: {verdict.covered ? `${verdict.score}/${verdict.maxScore}` : 'uncovered'} · {verdict.conceptTrained}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
           </div>
         )}
+
+        <StrategyWeaknessDashboard verdicts={strategyVerdicts} compact />
 
         <button className="btn-call" style={{ width: '100%', padding: 10 }} onClick={onNext}>
           {matchOver ? 'View match results' : 'Next hand'}
